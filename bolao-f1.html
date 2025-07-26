@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bolão F1</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 600px;
+      margin: 20px auto;
+      padding: 20px;
+      background-color: #f4f4f4;
+      border-radius: 10px;
+    }
+    .pergunta {
+      display: none;
+    }
+    .ativa {
+      display: block;
+    }
+    select, input[type="text"] {
+      width: 100%;
+      margin: 15px 0;
+      padding: 10px;
+    }
+    button {
+      padding: 10px 20px;
+      margin: 10px 5px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    #progresso {
+      height: 20px;
+      background-color: #ddd;
+      margin-bottom: 20px;
+      border-radius: 5px;
+      overflow: hidden;
+    }
+    #barraProgresso {
+      height: 100%;
+      width: 0%;
+      background-color: #28a745;
+      transition: width 0.3s;
+    }
+  </style>
+</head>
+<body>
+  <h1>Bolão F1 - Responda suas previsões</h1>
+
+  <!-- Barra de progresso -->
+  <div id="progresso">
+    <div id="barraProgresso"></div>
+  </div>
+
+  <form id="formulario">
+    <!-- Pergunta 1: Nome -->
+    <div class="pergunta ativa">
+      <label for="nome">Seu nome:</label>
+      <input type="text" id="nome" required />
+    </div>
+
+    <!-- Pergunta 2: Pole Position -->
+    <div class="pergunta">
+      <label for="pole">Quem fez a pole?</label>
+      <select id="pole"></select>
+    </div>
+
+    <!-- Pergunta 3: Primeiro colocado -->
+    <div class="pergunta">
+      <label for="primeiro">1º Colocado:</label>
+      <select id="primeiro"></select>
+    </div>
+
+    <!-- Pergunta 4: Segundo colocado -->
+    <div class="pergunta">
+      <label for="segundo">2º Colocado:</label>
+      <select id="segundo"></select>
+    </div>
+
+    <!-- Pergunta 5: Terceiro colocado -->
+    <div class="pergunta">
+      <label for="terceiro">3º Colocado:</label>
+      <select id="terceiro"></select>
+    </div>
+
+    <!-- Pergunta 6: Volta mais rápida -->
+    <div class="pergunta">
+      <label for="volta">Volta mais rápida:</label>
+      <select id="volta"></select>
+    </div>
+
+    <!-- Pergunta 7: Abandonos -->
+    <div class="pergunta">
+      <label for="abandonos">Quantos abandonaram?</label>
+      <select id="abandonos">
+        <option value="0-1">0-1</option>
+        <option value="2-3">2-3</option>
+        <option value="4+">4 ou mais</option>
+      </select>
+    </div>
+
+    <!-- Pergunta 8: Último colocado -->
+    <div class="pergunta">
+      <label for="ultimo">Último colocado:</label>
+      <select id="ultimo"></select>
+    </div>
+
+    <!-- Pergunta 9: Piloto do dia -->
+    <div class="pergunta">
+      <label for="pilotoDoDia">Piloto do dia:</label>
+      <select id="pilotoDoDia"></select>
+    </div>
+
+    <!-- Pergunta 10: Pit Stop mais rápido -->
+    <div class="pergunta">
+      <label for="pitStop">Equipe com pit stop mais rápido:</label>
+      <select id="pitStop"></select>
+    </div>
+
+    <!-- Botões de navegação -->
+    <div>
+      <button type="button" id="voltar">Voltar</button>
+      <button type="button" id="proximo">Próximo</button>
+      <button type="submit" id="enviar" style="display:none">Enviar</button>
+    </div>
+  </form>
+
+  <script>
+  const pilotos = [
+      "1 Max VERSTAPPEN", "4 Lando NORRIS ", "5 Gabriel BORTOLETO", "6 Isack HADJAR", "10 Pierre GASLY", "12 Andrea Kimi ANTONELLI", 
+      "14 Fernando ALONSO", "16 Charles LECLERC", "18 Lance STROLL", "22 Yuki TSUNODA", "23 Alexander ALBON", "27 Nico HÜLKENBERG",
+      "30 Liam LAWSON", "31 Esteban OCON", "43 Franco COLAPINTO", "44 Lewis HAMILTON", "55 Carlos SAINZ", 
+      "63 George RUSSELL", "81 Oscar PIASTRI", "87 Oliver BEARMAN"
+  ];
+
+  const equipes = [
+    "McLaren", "Ferrari", "Mercedes", "Red Bull Racing", "Williams",
+    "Kick Sauber", "Haas", "Racing Bulls", "Aston Martin", "Alpine"
+  ];
+
+  const idsPilotos = ["pole", "primeiro", "segundo", "terceiro", "volta", "ultimo", "pilotoDoDia"];
+  const idEquipe = "pitStop";
+
+  window.onload = function () {
+    idsPilotos.forEach(id => preencherSelect(id, pilotos));
+    preencherSelect(idEquipe, equipes);
+  };
+
+  function preencherSelect(id, opcoes) {
+    const select = document.getElementById(id);
+    opcoes.forEach(op => {
+      const option = document.createElement("option");
+      option.value = op;
+      option.text = op;
+      select.appendChild(option);
+    });
+  }
+
+  const perguntas = document.querySelectorAll(".pergunta");
+  let indiceAtual = 0;
+
+  function mostrarPergunta() {
+    perguntas.forEach((p, i) => {
+      p.classList.toggle("ativa", i === indiceAtual);
+    });
+    document.getElementById("voltar").style.display = indiceAtual === 0 ? "none" : "inline-block";
+    document.getElementById("proximo").style.display = indiceAtual === perguntas.length - 1 ? "none" : "inline-block";
+    document.getElementById("enviar").style.display = indiceAtual === perguntas.length - 1 ? "inline-block" : "none";
+    const progresso = ((indiceAtual + 1) / perguntas.length) * 100;
+    document.getElementById("barraProgresso").style.width = progresso + "%";
+  }
+
+  document.getElementById("voltar").onclick = () => {
+    if (indiceAtual > 0) indiceAtual--;
+    mostrarPergunta();
+  };
+
+  document.getElementById("proximo").onclick = () => {
+    if (indiceAtual < perguntas.length - 1) indiceAtual++;
+    mostrarPergunta();
+  };
+
+  // Enviar dados para Google Sheets
+  document.getElementById("formulario").onsubmit = function (e) {
+    e.preventDefault();
+
+    const dados = {};
+    const inputs = document.querySelectorAll("input, select");
+    inputs.forEach(el => dados[el.id] = el.value);
+
+    const botaoEnviar = document.getElementById("enviar");
+    botaoEnviar.disabled = true;
+    botaoEnviar.innerText = "Enviando...";
+
+    fetch("https://script.google.com/macros/s/AKfycbybMY6sm2cIz0EhOi7PYBaTCTzyFzJgR51jJ0Nj76mcfH7BWwB_O-eH-IYQMSL8nxpAyw/exec", {
+      method: "POST",
+      body: JSON.stringify(dados),
+      headers: {
+        "Content-Type": "application/json"
+      }
+    })
+    .then(res => res.text())
+    .then(msg => {
+      alert("Respostas enviadas com sucesso!");
+      botaoEnviar.innerText = "Enviado!";
+    })
+    .catch(err => {
+      console.error("Erro:", err);
+      alert("Erro ao enviar respostas. Tente novamente.");
+      botaoEnviar.disabled = false;
+      botaoEnviar.innerText = "Enviar";
+    });
+  };
+
+  mostrarPergunta();
+</script>
+
+</body>
+</html>

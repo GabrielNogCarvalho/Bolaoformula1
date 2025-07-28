@@ -50,77 +50,65 @@
 <body>
   <h1>Bolão F1 - Responda suas previsões</h1>
 
-  <!-- Barra de progresso -->
   <div id="progresso">
     <div id="barraProgresso"></div>
   </div>
 
-  <form id="formulario">
-    <!-- Pergunta 1: Nome -->
+  <form id="formulario" action="https://formspree.io/f/mnnzvzep" method="POST">
     <div class="pergunta ativa">
       <label for="nome">Seu nome:</label>
-      <input type="text" id="nome" required />
+      <input type="text" id="nome" name="nome" required />
     </div>
 
-    <!-- Pergunta 2: Pole Position -->
     <div class="pergunta">
       <label for="pole">Quem fez a pole?</label>
-      <select id="pole"></select>
+      <select id="pole" name="pole"></select>
     </div>
 
-    <!-- Pergunta 3: Primeiro colocado -->
     <div class="pergunta">
       <label for="primeiro">1º Colocado:</label>
-      <select id="primeiro"></select>
+      <select id="primeiro" name="primeiro"></select>
     </div>
 
-    <!-- Pergunta 4: Segundo colocado -->
     <div class="pergunta">
       <label for="segundo">2º Colocado:</label>
-      <select id="segundo"></select>
+      <select id="segundo" name="segundo"></select>
     </div>
 
-    <!-- Pergunta 5: Terceiro colocado -->
     <div class="pergunta">
       <label for="terceiro">3º Colocado:</label>
-      <select id="terceiro"></select>
+      <select id="terceiro" name="terceiro"></select>
     </div>
 
-    <!-- Pergunta 6: Volta mais rápida -->
     <div class="pergunta">
       <label for="volta">Volta mais rápida:</label>
-      <select id="volta"></select>
+      <select id="volta" name="volta"></select>
     </div>
 
-    <!-- Pergunta 7: Abandonos -->
     <div class="pergunta">
       <label for="abandonos">Quantos abandonaram?</label>
-      <select id="abandonos">
+      <select id="abandonos" name="abandonos">
         <option value="0-1">0-1</option>
         <option value="2-3">2-3</option>
         <option value="4+">4 ou mais</option>
       </select>
     </div>
 
-    <!-- Pergunta 8: Último colocado -->
     <div class="pergunta">
       <label for="ultimo">Último colocado:</label>
-      <select id="ultimo"></select>
+      <select id="ultimo" name="ultimo"></select>
     </div>
 
-    <!-- Pergunta 9: Piloto do dia -->
     <div class="pergunta">
       <label for="pilotoDoDia">Piloto do dia:</label>
-      <select id="pilotoDoDia"></select>
+      <select id="pilotoDoDia" name="pilotoDoDia"></select>
     </div>
 
-    <!-- Pergunta 10: Pit Stop mais rápido -->
     <div class="pergunta">
       <label for="pitStop">Equipe com pit stop mais rápido:</label>
-      <select id="pitStop"></select>
+      <select id="pitStop" name="pitStop"></select>
     </div>
 
-    <!-- Botões de navegação -->
     <div>
       <button type="button" id="voltar">Voltar</button>
       <button type="button" id="proximo">Próximo</button>
@@ -129,94 +117,72 @@
   </form>
 
   <script>
-  const pilotos = [
-      "1 Max VERSTAPPEN", "4 Lando NORRIS ", "5 Gabriel BORTOLETO", "6 Isack HADJAR", "10 Pierre GASLY", "12 Andrea Kimi ANTONELLI", 
+    const pilotos = [
+      "1 Max VERSTAPPEN", "4 Lando NORRIS ", "5 Gabriel BORTOLETO", "6 Isack HADJAR", "10 Pierre GASLY", "12 Andrea Kimi ANTONELLI",
       "14 Fernando ALONSO", "16 Charles LECLERC", "18 Lance STROLL", "22 Yuki TSUNODA", "23 Alexander ALBON", "27 Nico HÜLKENBERG",
-      "30 Liam LAWSON", "31 Esteban OCON", "43 Franco COLAPINTO", "44 Lewis HAMILTON", "55 Carlos SAINZ", 
+      "30 Liam LAWSON", "31 Esteban OCON", "43 Franco COLAPINTO", "44 Lewis HAMILTON", "55 Carlos SAINZ",
       "63 George RUSSELL", "81 Oscar PIASTRI", "87 Oliver BEARMAN"
-  ];
+    ];
 
-  const equipes = [
-    "McLaren", "Ferrari", "Mercedes", "Red Bull Racing", "Williams",
-    "Kick Sauber", "Haas", "Racing Bulls", "Aston Martin", "Alpine"
-  ];
+    const equipes = [
+      "McLaren", "Ferrari", "Mercedes", "Red Bull Racing", "Williams",
+      "Kick Sauber", "Haas", "Racing Bulls", "Aston Martin", "Alpine"
+    ];
 
-  const idsPilotos = ["pole", "primeiro", "segundo", "terceiro", "volta", "ultimo", "pilotoDoDia"];
-  const idEquipe = "pitStop";
+    const idsPilotos = ["pole", "primeiro", "segundo", "terceiro", "volta", "ultimo", "pilotoDoDia"];
+    const idEquipe = "pitStop";
 
-  window.onload = function () {
-    idsPilotos.forEach(id => preencherSelect(id, pilotos));
-    preencherSelect(idEquipe, equipes);
-  };
+    window.onload = function () {
+      idsPilotos.forEach(id => preencherSelect(id, pilotos));
+      preencherSelect(idEquipe, equipes);
+      mostrarPergunta(); // Garante que a primeira pergunta seja exibida corretamente ao carregar a página
+    };
 
-  function preencherSelect(id, opcoes) {
-    const select = document.getElementById(id);
-    opcoes.forEach(op => {
-      const option = document.createElement("option");
-      option.value = op;
-      option.text = op;
-      select.appendChild(option);
-    });
-  }
+    function preencherSelect(id, opcoes) {
+      const select = document.getElementById(id);
+      opcoes.forEach(op => {
+        const option = document.createElement("option");
+        option.value = op;
+        option.text = op;
+        select.appendChild(option);
+      });
+    }
 
-  const perguntas = document.querySelectorAll(".pergunta");
-  let indiceAtual = 0;
+    const perguntas = document.querySelectorAll(".pergunta");
+    let indiceAtual = 0;
 
-  function mostrarPergunta() {
-    perguntas.forEach((p, i) => {
-      p.classList.toggle("ativa", i === indiceAtual);
-    });
-    document.getElementById("voltar").style.display = indiceAtual === 0 ? "none" : "inline-block";
-    document.getElementById("proximo").style.display = indiceAtual === perguntas.length - 1 ? "none" : "inline-block";
-    document.getElementById("enviar").style.display = indiceAtual === perguntas.length - 1 ? "inline-block" : "none";
-    const progresso = ((indiceAtual + 1) / perguntas.length) * 100;
-    document.getElementById("barraProgresso").style.width = progresso + "%";
-  }
+    function mostrarPergunta() {
+      perguntas.forEach((p, i) => {
+        p.classList.toggle("ativa", i === indiceAtual);
+      });
+      document.getElementById("voltar").style.display = indiceAtual === 0 ? "none" : "inline-block";
+      document.getElementById("proximo").style.display = indiceAtual === perguntas.length - 1 ? "none" : "inline-block";
+      document.getElementById("enviar").style.display = indiceAtual === perguntas.length - 1 ? "inline-block" : "none";
+      const progresso = ((indiceAtual + 1) / perguntas.length) * 100;
+      document.getElementById("barraProgresso").style.width = progresso + "%";
+    }
 
-  document.getElementById("voltar").onclick = () => {
-    if (indiceAtual > 0) indiceAtual--;
-    mostrarPergunta();
-  };
+    document.getElementById("voltar").onclick = () => {
+      if (indiceAtual > 0) indiceAtual--;
+      mostrarPergunta();
+    };
 
-  document.getElementById("proximo").onclick = () => {
-    if (indiceAtual < perguntas.length - 1) indiceAtual++;
-    mostrarPergunta();
-  };
-
-  // Enviar dados para Google Sheets
-  document.getElementById("formulario").onsubmit = function (e) {
-    e.preventDefault();
-
-    const dados = {};
-    const inputs = document.querySelectorAll("input, select");
-    inputs.forEach(el => dados[el.id] = el.value);
-
-    const botaoEnviar = document.getElementById("enviar");
-    botaoEnviar.disabled = true;
-    botaoEnviar.innerText = "Enviando...";
-
-    fetch("https://script.google.com/macros/s/AKfycbybMY6sm2cIz0EhOi7PYBaTCTzyFzJgR51jJ0Nj76mcfH7BWwB_O-eH-IYQMSL8nxpAyw/exec", {
-      method: "POST",
-      body: JSON.stringify(dados),
-      headers: {
-        "Content-Type": "application/json"
+    document.getElementById("proximo").onclick = () => {
+      // Validação básica para o campo "nome" antes de avançar da primeira pergunta
+      if (indiceAtual === 0 && document.getElementById("nome").value.trim() === "") {
+        alert("Por favor, digite seu nome antes de prosseguir.");
+        return;
       }
-    })
-    .then(res => res.text())
-    .then(msg => {
-      alert("Respostas enviadas com sucesso!");
-      botaoEnviar.innerText = "Enviado!";
-    })
-    .catch(err => {
-      console.error("Erro:", err);
-      alert("Erro ao enviar respostas. Tente novamente.");
-      botaoEnviar.disabled = false;
-      botaoEnviar.innerText = "Enviar";
-    });
-  };
+      if (indiceAtual < perguntas.length - 1) indiceAtual++;
+      mostrarPergunta();
+    };
 
-  mostrarPergunta();
-</script>
+    // REMOÇÃO: Todo o bloco de código JavaScript que enviava para o Google Sheets foi removido,
+    // pois o Formspree fará o envio diretamente pelo HTML.
+    
 
+    mostrarPergunta();
+
+  </script>
 </body>
 </html>
